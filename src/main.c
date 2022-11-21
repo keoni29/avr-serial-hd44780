@@ -4,7 +4,7 @@
 
 int main(void) {
   // set_sleep_mode(SLEEP_MODE_IDLE);
-  lcdBegin(16, 2);
+  lcdBegin();
   
   uart_init();
 

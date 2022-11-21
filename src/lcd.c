@@ -1,7 +1,15 @@
+
+// ---------------------------------------------------------------------------
+// Includes
+// ---------------------------------------------------------------------------
 #include "lcd.h"
 #include <avr/io.h>
 #include <util/delay.h>
 
+
+// ---------------------------------------------------------------------------
+// Defines
+// ---------------------------------------------------------------------------
 #define DELAY_CLK 5
 #define DELAY_LONG 800
 
@@ -15,7 +23,17 @@
 #define HIGH 1
 #define LOW 0
 
-void pulseClock(void ) {
+// ---------------------------------------------------------------------------
+// Private functions
+// ---------------------------------------------------------------------------
+static void pulseClock(void );
+static void lcdWrite4(uint8_t value);
+static void lcdWrite(uint8_t command, uint8_t reg);
+
+// ---------------------------------------------------------------------------
+// Private functions
+// ---------------------------------------------------------------------------
+static void pulseClock(void ) {
   _delay_us(DELAY_CLK);
   PORTD |= ENA; // Enable pin HIGH
   _delay_us(DELAY_CLK);
@@ -64,7 +82,16 @@ static void lcdWrite(uint8_t command, uint8_t reg) {
   pulseClock();
 }
 
-void lcdBegin(uint8_t cols, uint8_t rows) {
+
+// ---------------------------------------------------------------------------
+// Public functions - Initialize
+// ---------------------------------------------------------------------------
+
+/**
+ * Initialize the character LCD
+*/
+// TODO implement LCD set size
+void lcdBegin(void) {
   DDRD |= RS | ENA | D4 | D5 | D6 | D7;
 
   lcdWrite4(0b0011);
@@ -74,7 +101,12 @@ void lcdBegin(uint8_t cols, uint8_t rows) {
   
   
   // send the "function set" command to configure display dimensions
-  lcdWrite(0b00101100, LOW);
+  // the LCD can be set to 1 (bit 3 clear) or 2 (bit 3 set) lines
+  lcdWrite(0b00101000, LOW);
+
+  //
+  // 0  0 1 0   1 1 0 0
+  // 0	0	1	DL	N	F	*	*
 
   // send the "display on/off control" command (1000) to power on the
   // display (0100), enable cursor (0010), and enable cursor blink (0001)
@@ -89,10 +121,23 @@ void lcdBegin(uint8_t cols, uint8_t rows) {
   
 }
 
+// ---------------------------------------------------------------------------
+// Public functions - Printing LCD characters
+// ---------------------------------------------------------------------------
+
+/**
+ * Print a single character to the character LCD
+ * @param c[in] the character to be printed
+*/
 void lcdPrint(const char c) {
   lcdWrite(c, HIGH);
 }
 
+
+/**
+ * Print a string of characters to the character LCD
+ * @param str[in] the string of characters to be printed
+*/
 void lcdPrintln(const char* str) {
   char c;
   while ((c = *str)) {

@@ -10,4 +10,4 @@
 
 void lcdPrintln(const char*str);
 void lcdPrint(const char c);
-void lcdBegin(uint8_t cols, uint8_t rows);
+void lcdBegin(void);
