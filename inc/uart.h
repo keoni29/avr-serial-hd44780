@@ -37,10 +37,21 @@
 #define _UART_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 void uart_init(void);
 uint8_t uart_read(void);
 void uart_write_string(const char *string);
+/**
+ * @return a positive integer when uart data is available
+ * 
+ */
+bool uart_available(void);
 
+
+/**
+ * @return a character from the uart buffer if data is available, otherwise return 0.
+ */
+uint8_t uart_read(void);
 
 #endif // _UART_H

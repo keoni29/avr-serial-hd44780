@@ -1,15 +1,17 @@
 #include "lcd.h"
 #include "uart.h"
-
+#include <avr/sleep.h>
 
 int main(void) {
+  // set_sleep_mode(SLEEP_MODE_IDLE);
   lcdBegin(16, 2);
+  
   uart_init();
 
   lcdPrintln("Character Display 40x2");
   for(;;){
-    char c = uart_read();
-    lcdPrint(c);
-
-  }  
+    if (uart_available()) {
+      lcdPrint(uart_read());
+    }
+  }
 }

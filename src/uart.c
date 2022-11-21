@@ -29,7 +29,20 @@
  */
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "uart.h"
+#include "ringbuffer.h"
+
+#define RX_BUFFER_LENGTH 64
+//#define TX_BUFFER_LENGTH 64
+
+
+typedef struct {
+	RingBuffer rxBuffer;
+	//RingBuffer txBuffer;
+}Uart;
+
+Uart mUart;
 
 /* Highest possible baudrate @ 16MHz */
 #define BAUDRATE 9600UL
@@ -41,22 +54,14 @@
  */
 inline void uart_init(void)
 {
+	ringBufferCreate(&mUart.rxBuffer, RX_BUFFER_LENGTH);
+	//ringBufferCreate(&mUart.txBuffer, TX_BUFFER_LENGTH);
+
     UBRRH = (UB >> 8) & 0xFF;
 	UBRRL = (UB & 0xFF);
 
-	UCSRB = (1<<RXEN)|(1<<TXEN);
-}
-
-
-/**
- * Read a character from the UART.
- * Waits until a character is received.
- * @return The received character
- */
-inline uint8_t uart_read(void)
-{
-    while(!(UCSRA & (1 << RXC)));
-    return UDR;
+	UCSRB = (1<<RXEN)|(1<<TXEN)|(1<<RXCIE);
+	sei();
 }
 
 
@@ -74,3 +79,27 @@ void uart_write_string(const char *string)
 		++string;
 	}
 }
+
+/**
+ * @return a positive integer when uart data is available
+ * 
+ */
+inline bool uart_available(void) {
+	return ringBufferAvailable(&mUart.rxBuffer);
+}
+
+
+/**
+ * @return a character from the uart buffer if data is available, otherwise return 0.
+ */
+inline uint8_t uart_read(void) {
+	return ringBufferRead(&mUart.rxBuffer);
+}
+
+
+ISR(USART_RXC_vect) {
+	char c = UDR;
+
+	ringBufferWrite(&mUart.rxBuffer, c);
+}
+
