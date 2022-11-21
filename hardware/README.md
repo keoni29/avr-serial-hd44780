@@ -1,11 +1,13 @@
 # Serial Character Display
 
+This document describes my hardware test target
+
 ## Parts
 
 | Ref   |   Partno.  | Manuf. | Description |
 | --- | --- | --- | --- |
-|  A1   | Optrex    |  DCM40202A |  Character Display Assembly |
-|  U1   | ATmega8   |  Microchip |  8-bit Atmel with 8KBytes InSystem Programmable Flash DIP 28 THT|
+|  A1   | [DMC40202A](https://www.alldatasheet.com/datasheet-pdf/pdf/100923/OPTREX/DMC40202.html) | Optrex  |  Character Display Assembly |
+|  U1   | [ATmega8](https://www.alldatasheet.com/datasheet-pdf/pdf/80247/ATMEL/ATMEGA8.html)   |  Microchip |  8-bit Atmel with 8KBytes InSystem Programmable Flash DIP 28 THT|
 |  P1   | - | - | Female Header Straight 2x7 Pin THT |
 |  P2   | - | - | Male Header Angled 2 Pin THT |
 |  P3   | - | - | Male Header Angled 8 Pin THT |
@@ -16,16 +18,18 @@
 
 ## Wiring
 
+The LCD voltage V_LCD is generated using a potentiometer voltage divider circuit. Changing the voltage sets the contrast of the LCD. I found that 0.4 V works best for my display, but your results may vary.
 ```
     +5V
      |
- R2  R<--- V_LCD
+ R2  []<--- V_LCD
      |
     GND
 ```
 
 U1 Wiring to Display I/O Interface (P1 / A1)
-| Pin | Signal Name | Description |
+
+| U1 Pin | Signal Name | Description |
 | --- | --- | --- |
 | 4 (PD2) | RS | Register Select |
 | 5 (PD3) | E | Enable |
