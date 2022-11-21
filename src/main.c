@@ -1,9 +1,7 @@
 #include "lcd.h"
 #include "uart.h"
-#include <avr/sleep.h>
 
 int main(void) {
-  // set_sleep_mode(SLEEP_MODE_IDLE);
   lcdBegin();
   
   uart_init();
